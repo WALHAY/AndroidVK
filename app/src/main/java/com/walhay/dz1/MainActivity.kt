@@ -8,7 +8,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        elements = savedInstanceState?.getInt("elements") ?: 0
+        elements.intValue = savedInstanceState?.getInt("elements") ?: 0
+        inverted.value = savedInstanceState?.getBoolean("inverted") ?: false
         setContent {
             NumberTable()
         }
@@ -16,6 +17,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt("elements", elements)
+        outState.putInt("elements", elements.intValue)
+        outState.putBoolean("inverted", inverted.value)
     }
 }

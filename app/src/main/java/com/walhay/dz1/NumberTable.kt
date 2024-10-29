@@ -2,6 +2,7 @@ package com.walhay.dz1
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -12,10 +13,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,22 +23,29 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-var elements = 0
+var elements = mutableIntStateOf(0)
+var inverted = mutableStateOf(false)
 
 @Composable
 fun NumberTable() {
     val configuration = LocalConfiguration.current
-    val state = remember { mutableIntStateOf(elements) }
+    val state = remember { elements }
+    val inverted = remember { inverted }
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val columnsCount = if (isLandscape) 4 else 3
     Column {
         LazyVerticalGrid (
-            columns = GridCells.Fixed(if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 4 else 3),
+            columns = GridCells.Fixed(columnsCount),
             modifier = Modifier.weight(1f).fillMaxSize()
         ){
             items(state.intValue) { index ->
                 Box(
                     modifier = Modifier.aspectRatio(1f)
                         .padding(5.dp)
-                        .background(if (index % 2 == 0) Color.Red else Color.Blue)
+                        .background(if ((index % 2 == 0) == inverted.value) Color.Red else Color.Blue)
+                        .clickable {
+                            inverted.value = !inverted.value
+                        }
                 )
                 {
                     Text(text = "$index",
@@ -50,8 +57,7 @@ fun NumberTable() {
         }
         Button (
             onClick = {
-                elements++
-                state.intValue = elements
+                state.intValue++
                       },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
