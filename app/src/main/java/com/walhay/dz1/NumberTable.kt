@@ -28,13 +28,13 @@ var elements = 0
 @Composable
 fun NumberTable() {
     val configuration = LocalConfiguration.current
-    var state by remember { mutableIntStateOf(elements) }
+    val state = remember { mutableIntStateOf(elements) }
     Column {
         LazyVerticalGrid (
             columns = GridCells.Fixed(if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 4 else 3),
             modifier = Modifier.weight(1f).fillMaxSize()
         ){
-            items(state) { index ->
+            items(state.intValue) { index ->
                 Box(
                     modifier = Modifier.aspectRatio(1f)
                         .padding(5.dp)
@@ -49,7 +49,10 @@ fun NumberTable() {
             }
         }
         Button (
-            onClick = { state++; elements++ },
+            onClick = {
+                elements++
+                state.intValue = elements
+                      },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         {
